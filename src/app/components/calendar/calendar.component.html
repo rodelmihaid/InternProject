@@ -1,0 +1,78 @@
+<!-- calendar.component.html -->
+<div class="flex flex-col items-center justify-center p-4">
+  <div class="bg-white rounded-lg shadow-lg">
+    <div class="flex items-center justify-between p-4 border-b">
+      <span class="text-lg font-semibold"
+        >{{ currentYear }}-{{ currentMonth + 1 | number : "2.0" }}</span
+      >
+      <div>
+        <button
+          (click)="goToPreviousMonth()"
+          class="p-2 rounded-full hover:bg-gray-200"
+        >
+          Prev
+        </button>
+        <button
+          (click)="goToNextMonth()"
+          class="p-2 rounded-full hover:bg-gray-200"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+    <div class="grid grid-cols-7 gap-1 p-4">
+      <div class="text-center font-bold text-lg">D</div>
+      <div class="text-center font-bold text-lg">L</div>
+      <div class="text-center font-bold text-lg">M</div>
+      <div class="text-center font-bold text-lg">M</div>
+      <div class="text-center font-bold text-lg">J</div>
+      <div class="text-center font-bold text-lg">V</div>
+      <div class="text-center font-bold text-lg">S</div>
+      <div
+        *ngFor="let day of daysOfMonth"
+        class="p-2 text-center hover:bg-blue-100 rounded"
+      >
+        <button
+          *ngIf="day !== 0"
+          class="w-[100px] h-[100px]"
+          (click)="selectDay(day)"
+        >
+          {{ day }}
+          <h1 *ngIf="events[day]">{{ events[day] }}</h1>
+        </button>
+      </div>
+    </div>
+    <!-- Formular pentru adăugarea evenimentelor -->
+    <div *ngIf="selectedDay" class="p-4 bg-gray-100 rounded">
+      <h3 class="text-lg font-semibold">
+        Adaugă eveniment la data: {{ currentYear }}-{{ currentMonth + 1 }}-{{
+          selectedDay
+        }}
+      </h3>
+      <form>
+        <input
+          type="text"
+          [(ngModel)]="eventTitle"
+          name="titlul"
+          placeholder="Titlul evenimentului"
+          class="border p-2 rounded w-full"
+        />
+        <div class="flex justify-around py-10">
+          <button
+            type="button"
+            class="mt-2 p-2 bg-blue-500 text-white rounded"
+            (click)="addEvent(eventTitle)"
+          >
+            Adaugă Eveniment
+          </button>
+          <button
+            class="mt-2 p-2 bg-blue-500 text-white rounded font-extrabold"
+            (click)="closeForm()"
+          >
+            &times;
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
