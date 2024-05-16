@@ -35,10 +35,20 @@
         <button
           *ngIf="day !== 0"
           class="w-[100px] h-[100px]"
-          (click)="selectDay(day)"
+          (click)="selectDay(day, currentMonth + 1)"
         >
           {{ day }}
-          <h1 *ngIf="events[day]">{{ events[day] }}</h1>
+          <!-- <div *ngFor="let event of getEventsForSelectedDay(day)" class="event">
+            <div *ngIf="currentMonth == event.month">{{ event }}</div>
+          </div> -->
+          <div *ngIf="events[day]">
+            <div *ngFor="let event of events[day]">
+              <div *ngIf="event.month == currentMonth + 1">
+                <!-- Afișează luna și textul pentru fiecare eveniment -->
+                {{ event.text }}
+              </div>
+            </div>
+          </div>
         </button>
       </div>
     </div>

@@ -10,7 +10,8 @@ export class CalendarComponent {
   currentYear: number;
   daysOfMonth: number[] = [];
   selectedDay: number | null = null; // Adaugă această linie
-  events: { [day: number]: string[] } = {};
+  key!: number;
+  events: { [key: number]: Event[] } = {};
 
   constructor() {
     const today = new Date();
@@ -51,27 +52,43 @@ export class CalendarComponent {
     this.generateCalendarDays(this.currentMonth, this.currentYear);
   }
 
-  selectDay(day: number): void {
+  selectedMonth() {}
+
+  selectDay(day: number, currentMonth: number): void {
+    if (this.selectedDay) {
+      this.eventTitle = '';
+    }
     this.selectedDay = day; // Setează ziua selectată
+    console.log(this.selectedDay);
   }
   eventTitle: string = '';
 
-  addEvent(eventTitle: string): void {
+  addEvent(text: string): void {
     if (this.selectedDay) {
       if (!this.events[this.selectedDay]) {
         this.events[this.selectedDay] = [];
       }
-      this.events[this.selectedDay].push(eventTitle);
-      this.selectedDay = null; // Închide formularul după adăugarea evenimentului
+      this.events[this.selectedDay].push({
+        month: this.currentMonth + 1,
+        text: text,
+      });
+      console.log(this.events[this.selectedDay]);
+      this.selectedDay = null; //
+      this.eventTitle = '';
     }
   }
+
+  getEventsForSelectedDay(day: number): Event[] {
+    return this.events[day] || [];
+  }
+
   closeForm(): void {
     this.selectedDay = null; // Resetează ziua selectată pentru a închide formularul
     this.eventTitle = ''; // Opțional, poți să resetezi și titlul evenimentului
   }
 }
+
 interface Event {
-  day: number;
   month: number;
   text: string;
 }
