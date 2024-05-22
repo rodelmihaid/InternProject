@@ -1,18 +1,53 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { Observable } from 'rxjs';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-calendar',
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.css'],
 })
-export class CalendarComponent {
+export class CalendarComponent implements OnInit {
+  ngOnInit(): void {
+    this.loadInternshipPeriod();
+  }
   startDate!: Date;
   endDate!: Date;
   months: any[] = [];
   currentViewMonth!: number;
   currentViewYear!: number;
+  user: Observable<any>;
+  isAdmin: boolean = false;
 
-  constructor() {}
+  constructor(private authService: AuthService) {
+    this.user = authService.userData;
+    console.log(this.user);
+    console.log(authService.getRole(this.user));
+    this.isAdmin = authService.isAdmin();
+  }
+
+  loadInternshipPeriod(): void {
+    this.authService.getInternshipPeriod().subscribe((doc) => {
+      if (doc.exists) {
+        const data = doc.data() as InternshipPeriod;
+        this.startDate = new Date(data.startDate);
+        this.endDate = new Date(data.endDate);
+        this.checkDatesAndGenerate();
+      }
+    });
+  }
+
+  saveInternshipPeriod(): void {
+    this.authService
+      .setInternshipPeriod(this.startDate, this.endDate)
+      .then(() => {
+        console.log('Internship period saved successfully');
+      })
+      .catch((error) => {
+        console.error('Error saving internship period:', error);
+      });
+  }
 
   checkDatesAndGenerate(): void {
     if (this.startDate && this.endDate) {
@@ -93,86 +128,18 @@ export class CalendarComponent {
     }
   }
 
-  // currentMonth!: number;
-  // currentYear!: number;
-  // daysOfMonth: number[] = [];
   selectedDay: number | null = null; // Adaugă această linie
-  // key!: number;
   events: { [key: number]: Event[] } = {};
-  // startDate!: Date;
-  // endDate!: Date;
-  // months: any[] = [];
 
-  // constructor() {
-  //   const today = new Date();
-  //   this.currentMonth = today.getMonth();
-  //   this.currentYear = today.getFullYear();
-  //   this.generateCalendarDays(this.currentMonth, this.currentYear);
-  //   // this.generateCalendar(this.startDate, this.endDate);
-  // }
-
-  // generateCalendar(startDate: Date, endDate: Date): void {
-  //   this.currentMonth = this.startDate.getMonth();
-  //   this.currentYear = this.startDate.getFullYear();
-  //   const startMonth = startDate.getMonth();
-  //   const endMonth = endDate.getMonth();
-  //   const startYear = startDate.getFullYear();
-  //   const endYear = endDate.getFullYear();
-
-  //   for (let year = startYear; year <= endYear; year++) {
-  //     const firstMonth = year === startYear ? startMonth : 0;
-  //     const lastMonth = year === endYear ? endMonth : 11;
-
-  //     for (let month = firstMonth; month <= lastMonth; month++) {
-  //       const days = [];
-  //       const numDays = new Date(year, month + 1, 0).getDate();
-
-  //       for (let day = 1; day <= numDays; day++) {
-  //         const currentDate = new Date(year, month, day);
-  //         if (currentDate >= startDate && currentDate <= endDate) {
-  //           days.push(day);
-  //         }
-  //       }
-  //       if (days.length > 0) {
-  //         this.months.push({ year, month, days });
-  //       }
-  //     }
-  //   }
-  // }
-  // generateCalendarDays(month: number, year: number): void {
-  //   this.daysOfMonth = [];
-  //   const daysInMonth = new Date(year, month + 1, 0).getDate();
-  //   const startDay = new Date(year, month, 1).getDay();
-
-  //   for (let empty = 0; empty < startDay; empty++) {
-  //     this.daysOfMonth.push(0);
-  //   }
-  //   for (let day = 1; day <= daysInMonth; day++) {
-  //     this.daysOfMonth.push(day);
-  //   }
-  // }
-
-  // goToNextMonth(): void {
-  //   if (this.currentMonth === 11) {
-  //     this.currentMonth = 0;
-  //     this.currentYear++;
-  //   } else {
-  //     this.currentMonth++;
-  //   }
-  //   this.generateCalendarDays(this.currentMonth, this.currentYear);
-  // }
-
-  // goToPreviousMonth(): void {
-  //   if (this.currentMonth === 0) {
-  //     this.currentMonth = 11;
-  //     this.currentYear--;
-  //   } else {
-  //     this.currentMonth--;
-  //   }
-  //   this.generateCalendarDays(this.currentMonth, this.currentYear);
-  // }
-
-  // selectedMonth() {}
+  onDateChange(event: MatDatepickerInputEvent<Date>, dateType: string): void {
+    if (dateType === 'start') {
+      this.startDate = event.value!;
+    } else if (dateType === 'end') {
+      this.endDate = event.value!;
+    }
+    this.checkDatesAndGenerate();
+    this.saveInternshipPeriod();
+  }
 
   selectDay(day: number, currentMonth: number): void {
     if (this.selectedDay) {
@@ -211,4 +178,9 @@ export class CalendarComponent {
 interface Event {
   month: number;
   text: string;
+}
+
+interface InternshipPeriod {
+  startDate: string;
+  endDate: string;
 }

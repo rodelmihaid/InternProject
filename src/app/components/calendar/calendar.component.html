@@ -1,29 +1,52 @@
-<mat-form-field appearance="fill">
-  <mat-label>Start Date</mat-label>
-  <input
-    matInput
-    [matDatepicker]="picker1"
-    [(ngModel)]="startDate"
-    (dateChange)="checkDatesAndGenerate()"
-  />
-  <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-  <mat-datepicker #picker1></mat-datepicker>
-</mat-form-field>
+<div *ngIf="isAdmin == true" class="flex flex-col">
+  <div class="flex flex-row justify-center gap-10">
+    <mat-form-field appearance="fill">
+      <mat-label>Start Date</mat-label>
+      <input
+        matInput
+        [matDatepicker]="picker1"
+        [(ngModel)]="startDate"
+        (dateChange)="onDateChange($event, 'start')"
+      />
+      <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+      <mat-datepicker #picker1></mat-datepicker>
+    </mat-form-field>
 
-<mat-form-field appearance="fill">
-  <mat-label>End Date</mat-label>
-  <input
-    matInput
-    [matDatepicker]="picker2"
-    [(ngModel)]="endDate"
-    (dateChange)="checkDatesAndGenerate()"
-  />
-  <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-  <mat-datepicker #picker2></mat-datepicker>
-</mat-form-field>
-
-<button (click)="goToPreviousMonth(startDate)">Prev</button>
-<button (click)="goToNextMonth(endDate)">Next</button>
+    <mat-form-field appearance="fill">
+      <mat-label>End Date</mat-label>
+      <input
+        matInput
+        [matDatepicker]="picker2"
+        [(ngModel)]="endDate"
+        (dateChange)="onDateChange($event, 'end')"
+      />
+      <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+      <mat-datepicker #picker2></mat-datepicker>
+    </mat-form-field>
+  </div>
+  <div class="flex flex-row justify-center gap-20">
+    <button
+      class="mt-2 p-2 bg-blue-500 text-white rounded font-extrabold"
+      (click)="goToPreviousMonth(startDate)"
+    >
+      Prev
+    </button>
+    <button
+      class="mt-2 p-2 bg-blue-500 text-white rounded font-extrabold"
+      (click)="goToNextMonth(endDate)"
+    >
+      Next
+    </button>
+  </div>
+  <div class="flex">
+    <button
+      routerLink="/register"
+      class="mt-2 p-2 bg-blue-500 text-white rounded font-extrabold"
+    >
+      Register
+    </button>
+  </div>
+</div>
 
 <div *ngIf="months.length > 0">
   <div *ngFor="let month of months">
@@ -32,13 +55,13 @@
     >
       <h2>{{ month.year }}-{{ month.month + 1 }}</h2>
       <div class="flex flex-row justify-around gap-2">
-        <div class="text-center font-bold text-lg">Su</div>
-        <div class="text-center font-bold text-lg">Mo</div>
-        <div class="text-center font-bold text-lg">Tu</div>
-        <div class="text-center font-bold text-lg">We</div>
-        <div class="text-center font-bold text-lg">Th</div>
-        <div class="text-center font-bold text-lg">Fr</div>
-        <div class="text-center font-bold text-lg">Sa</div>
+        <div class="text-center font-bold text-2xl">Su</div>
+        <div class="text-center font-bold text-2xl">Mo</div>
+        <div class="text-center font-bold text-2xl">Tu</div>
+        <div class="text-center font-bold text-2xl">We</div>
+        <div class="text-center font-bold text-2xl">Th</div>
+        <div class="text-center font-bold text-2xl">Fr</div>
+        <div class="text-center font-bold text-2xl">Sa</div>
       </div>
       <div class="grid grid-cols-7 gap-1">
         <div
@@ -48,7 +71,7 @@
           <button
             (click)="selectDay(day, month)"
             *ngIf="day !== 0; else emptyCell"
-            class="w-[100px] h-[100px]"
+            class="w-[100px] h-[100px] font-bold"
           >
             {{ day }}
             <div *ngIf="events[day]">
@@ -66,21 +89,32 @@
       </div>
     </div>
   </div>
-  <div *ngIf="selectedDay" class="p-4 bg-gray-100 rounded">
+  <div
+    *ngIf="selectedDay && isAdmin"
+    class="p-4 bg-gray-100 rounded flex items-center justify-center flex-col"
+  >
     <h3 class="text-lg font-semibold">
       Adaugă eveniment la data: {{ currentViewYear }}-{{
         currentViewMonth + 1
       }}-{{ selectedDay }}
     </h3>
     <form>
-      <input
+      <mat-form-field appearance="fill">
+        <mat-label>Titlul evenimentului</mat-label>
+        <mat-select [(ngModel)]="eventTitle" name="titlul">
+          <mat-option value="Meet">Meet</mat-option>
+          <mat-option value="Training">Training</mat-option>
+          <mat-option value="Remote">Remote</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <!-- <input
         type="text"
         [(ngModel)]="eventTitle"
         name="titlul"
         placeholder="Titlul evenimentului"
         class="border p-2 rounded w-full"
-      />
-      <div class="flex justify-around py-10">
+      /> -->
+      <div class="flex justify-around py-10 gap-3">
         <button
           type="button"
           class="mt-2 p-2 bg-blue-500 text-white rounded"
@@ -89,7 +123,7 @@
           Adaugă Eveniment
         </button>
         <button
-          class="mt-2 p-2 bg-blue-500 text-white rounded font-extrabold"
+          class="mt-2 p-2 bg-blue-500 text-white rounded font-extrabold min-w-[100px]"
           (click)="closeForm()"
         >
           &times;
