@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
+import swal from 'sweetalert2';
 
 @Component({
   selector: 'app-login',
@@ -14,8 +15,11 @@ export class LoginComponent implements OnInit {
     password: '',
   };
   errorMessage: string = '';
+  user!: any;
 
-  constructor(public authService: AuthService, private router: Router) {}
+  constructor(public authService: AuthService, private router: Router) {
+    authService.signOutLogin();
+  }
 
   onSubmit() {
     this.authService
@@ -23,13 +27,34 @@ export class LoginComponent implements OnInit {
       .then(() => {
         console.log('Login data:', this.loginData);
         console.log('Login successfully');
-        this.router.navigate(['/calendar']); // Redirecționează utilizatorul către pagina /calendar
+        swal
+          .fire({
+            icon: 'success',
+            text: 'You have successfully signed',
+            timer: 2000, // Ascunde automat alerta după 3 secunde
+            timerProgressBar: true, // Bară de progres pentru durata alertei
+            toast: true, // Afișează alerta ca și toast
+            position: 'top-start', // Poziția alertei
+            showConfirmButton: false, // Nu afișa butonul de confirmare
+          })
+          .then(() => {
+            this.router.navigate(['/calendar']);
+          });
       })
       .catch((err) => {
         this.errorMessage = err.message;
+        swal.fire({
+          icon: 'error',
+          text: this.errorMessage,
+          timer: 3000, // Ascunde automat alerta după 3 secunde
+          timerProgressBar: true, // Bară de progres pentru durata alertei
+          toast: true, // Afișează alerta ca și toast
+          position: 'top-start', // Poziția alertei
+          showConfirmButton: false, // Nu afișa butonul de confirmare
+        });
         console.log(this.errorMessage);
       });
-    // Aici poți adăuga logica pentru autentificare, de exemplu trimiterea datelor către un server
   }
+
   ngOnInit(): void {}
 }

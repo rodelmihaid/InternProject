@@ -6,6 +6,8 @@ import { CalendarComponent } from './components/calendar/calendar.component';
 import { AuthGuard } from './services/guard/auth.guard';
 import { LoginGuard } from './services/guard/login.guard';
 import { RegisterComponent } from './components/register/register.component';
+import { UsersComponent } from './components/users/users.component';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 
 const routes: Routes = [
   {
@@ -13,9 +15,14 @@ const routes: Routes = [
     redirectTo: 'login',
     pathMatch: 'full',
   },
-  { path: 'login', component: LoginComponent, canActivate: [LoginGuard] },
-  { path: 'calendar', component: CalendarComponent }, //, canActivate: [AuthGuard]
-  { path: 'register', component: RegisterComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'calendar', component: CalendarComponent, canActivate: [AuthGuard] }, //, canActivate: [AuthGuard]
+  { path: 'register', component: RegisterComponent, canActivate: [AuthGuard] },
+  {
+    path: 'forgot-password',
+    component: ForgotPasswordComponent,
+  },
+  { path: 'users', component: UsersComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({

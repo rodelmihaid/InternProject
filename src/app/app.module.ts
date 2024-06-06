@@ -13,12 +13,18 @@ import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { environment } from 'src/environments/environment';
 import { RegisterComponent } from './components/register/register.component';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
+import { UsersComponent } from './components/users/users.component';
+import { CommonModule } from '@angular/common';
+
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     CalendarComponent,
     RegisterComponent,
+    ForgotPasswordComponent,
+    UsersComponent,
   ],
   imports: [
     BrowserModule,
@@ -29,6 +35,7 @@ import { RegisterComponent } from './components/register/register.component';
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireAuthModule,
     AngularFirestoreModule,
+    CommonModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

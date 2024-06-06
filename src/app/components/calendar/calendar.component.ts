@@ -1,7 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
+import {
+  EventService,
+  EventsService,
+} from 'src/app/services/events/events.service';
 
 @Component({
   selector: 'app-calendar',
@@ -18,13 +23,43 @@ export class CalendarComponent implements OnInit {
   currentViewMonth!: number;
   currentViewYear!: number;
   user: Observable<any>;
-  isAdmin: boolean = false;
+  selectedDay: number | null = null; // Adaugă această linie
+  events: { [key: number]: Event[] } = {};
 
-  constructor(private authService: AuthService) {
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private eventService: EventsService
+  ) {
     this.user = authService.userData;
     console.log(this.user);
-    console.log(authService.getRole(this.user));
-    this.isAdmin = authService.isAdmin();
+    this.eventService.getEventList().subscribe((data) => {
+      for (let date of data) {
+        console.log(date);
+        if (date) {
+          if (!this.events[date.day]) {
+            this.events[date.day] = [];
+          }
+          this.events[date.day].push({
+            month: date.month + 1,
+            text: date.text,
+          });
+        }
+      }
+      console.log(this.events);
+    });
+  }
+
+  isAdmin(): boolean {
+    if (this.authService.isAdmin == true) {
+      return true;
+    }
+    return false;
+  }
+
+  logout() {
+    this.authService.signOut();
+    this.router.navigate(['login']);
   }
 
   loadInternshipPeriod(): void {
@@ -109,10 +144,10 @@ export class CalendarComponent implements OnInit {
     ) {
       this.currentViewMonth = 0;
       this.currentViewYear++;
+      console.log(this.currentViewMonth);
     } else if (this.currentViewMonth < endDate.getMonth()) {
       this.currentViewMonth++;
       console.log(this.currentViewMonth);
-      console.log(endDate.getMonth());
     }
   }
 
@@ -127,9 +162,6 @@ export class CalendarComponent implements OnInit {
       this.currentViewMonth--;
     }
   }
-
-  selectedDay: number | null = null; // Adaugă această linie
-  events: { [key: number]: Event[] } = {};
 
   onDateChange(event: MatDatepickerInputEvent<Date>, dateType: string): void {
     if (dateType === 'start') {
@@ -149,7 +181,7 @@ export class CalendarComponent implements OnInit {
     console.log(this.selectedDay);
   }
   eventTitle: string = '';
-
+  newEvent!: EventToFirebase;
   addEvent(text: string): void {
     if (this.selectedDay) {
       if (!this.events[this.selectedDay]) {
@@ -159,6 +191,15 @@ export class CalendarComponent implements OnInit {
         month: this.currentViewMonth + 1,
         text: text,
       });
+
+      this.newEvent = {
+        day: this.selectedDay,
+        month: this.currentViewMonth,
+        text: text,
+      };
+
+      this.eventService.addEvent(this.newEvent);
+
       console.log(this.events[this.selectedDay]);
       this.selectedDay = null; //
       this.eventTitle = '';
@@ -179,7 +220,11 @@ interface Event {
   month: number;
   text: string;
 }
-
+export interface EventToFirebase {
+  day: number;
+  month: number;
+  text: string;
+}
 interface InternshipPeriod {
   startDate: string;
   endDate: string;

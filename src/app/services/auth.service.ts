@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Observable, of, switchMap } from 'rxjs';
+import { Router } from '@angular/router';
+import { Observable, map, of, switchMap } from 'rxjs';
+import Swal from 'sweetalert2';
 
 @Injectable({
   providedIn: 'root',
@@ -9,12 +11,16 @@ import { Observable, of, switchMap } from 'rxjs';
 export class AuthService {
   user$: Observable<User | any>;
   userData: any;
+  isAuthenticated?: boolean;
+  isAdmin?: boolean;
 
   constructor(
     private afs: AngularFireAuth,
-    private firestore: AngularFirestore
+    private firestore: AngularFirestore,
+    private router: Router
   ) {
     this.user$ = this.afs.authState;
+    console.log(this.user$);
 
     this.user$.subscribe((user) => {
       if (user) {
@@ -23,41 +29,23 @@ export class AuthService {
           .doc<any>(`users/${user.uid}`)
           .valueChanges()
           .subscribe((userData) => {
-            this.userData = userData;
+            this.userData = JSON.stringify(userData);
+            console.log(this.userData);
+            console.log('AICITATA');
+            this.isAuthenticated = true;
+            console.log(this.isAuthenticated);
           });
       } else {
-        // Dacă nu există un utilizator autentificat, resetează datele utilizatorului
-        this.userData = null;
+        this.userData = undefined;
+        console.log(this.userData);
+
+        this.isAuthenticated = false;
+        this.isAdmin = false;
       }
     });
   }
 
-  isAdmin(): boolean {
-    if (localStorage.getItem('role') == 'ADMIN') {
-      return true;
-    }
-    return false;
-  }
-
-  isAuthenticated(): boolean {
-    if (this.userData) {
-      return true;
-    }
-    return false;
-  }
-
-  getRole(user: any): string | null {
-    if (user && user.roles) {
-      const roles = Object.keys(user.roles);
-      for (let role of roles) {
-        if (user.roles[role]) {
-          localStorage.setItem('role', role);
-          return role;
-        }
-      }
-    }
-    return null; // Dacă nu se găsește niciun rol cu valoarea true
-  }
+  //
 
   registerUserWithEmailAndPassword(email: string, password: string) {
     return this.afs
@@ -65,17 +53,60 @@ export class AuthService {
       .then((result) => {
         return this.firestore.doc(`users/${result.user?.uid}`).set({
           email: result.user?.email,
-          roles: {
-            USER: true,
-            ADMIN: false,
-            STAFF: false,
-          },
+          isAdmin: false,
         });
       });
   }
 
+  getUsers(): Observable<any[]> {
+    return this.firestore
+      .collection('users')
+      .snapshotChanges()
+      .pipe(
+        map((actions) =>
+          actions.map((a) => {
+            const data = a.payload.doc.data() as any;
+            const id = a.payload.doc.id;
+            return { id, ...data };
+          })
+        )
+      );
+  }
+
+  deleteUser(id: string): Promise<void> {
+    return this.firestore.collection('users').doc(id).delete();
+  }
+
   getInternshipPeriod() {
     return this.firestore.collection('internshipPeriod').doc('period').get();
+  }
+  ForgotPassword(passwordResetEmail: string) {
+    return this.afs
+      .sendPasswordResetEmail(passwordResetEmail)
+      .then(() => {
+        Swal.fire({
+          icon: 'success',
+          text: 'Password reset email sent, check your inbox.',
+          timer: 2000, // Ascunde automat alerta după 3 secunde
+          timerProgressBar: true, // Bară de progres pentru durata alertei
+          toast: true, // Afișează alerta ca și toast
+          position: 'top-start', // Poziția alertei
+          showConfirmButton: false, // Nu afișa butonul de confirmare
+        }).then(() => {
+          this.router.navigate(['/login']);
+        });
+      })
+      .catch((error) => {
+        Swal.fire({
+          icon: 'error',
+          text: error,
+          timer: 3000, // Ascunde automat alerta după 3 secunde
+          timerProgressBar: true, // Bară de progres pentru durata alertei
+          toast: true, // Afișează alerta ca și toast
+          position: 'top-start', // Poziția alertei
+          showConfirmButton: false, // Nu afișa butonul de confirmare
+        });
+      });
   }
 
   setInternshipPeriod(startDate: Date, endDate: Date) {
@@ -90,36 +121,60 @@ export class AuthService {
       .then((result) => {
         return this.firestore.doc(`users/${result.user?.uid}`).set({
           email: result.user?.email,
-          roles: {
-            USER: false,
-            ADMIN: true,
-            STAFF: false,
-          },
+          isAdmin: true,
         });
       });
   }
 
-  registerStaffWithEmailAndPassword(email: string, password: string) {
-    return this.afs
-      .createUserWithEmailAndPassword(email, password)
-      .then((result) => {
-        return this.firestore.doc(`users/${result.user?.uid}`).set({
-          email: result.user?.email,
-          roles: {
-            USER: false,
-            ADMIN: false,
-            STAFF: true,
-          },
-        });
-      });
-  }
-
+  // signInWithEmailAndPassword(email: string, password: string) {
+  //   return this.afs.signInWithEmailAndPassword(email, password);
+  // }
   signInWithEmailAndPassword(email: string, password: string) {
-    return this.afs.signInWithEmailAndPassword(email, password);
+    return this.afs
+      .signInWithEmailAndPassword(email, password)
+      .then((result) => {
+        this.afs.authState.subscribe((user) => {
+          if (user) {
+            this.firestore
+              .doc(`users/${user.uid}`)
+              .valueChanges()
+              .subscribe((userData: any) => {
+                if (userData) {
+                  this.isAdmin = userData.isAdmin;
+                  console.log(userData.isAdmin);
+                }
+              });
+          }
+        });
+      });
   }
 
-  logout() {
+  signOut() {
+    return this.afs
+      .signOut()
+      .then(() => {
+        this.router.navigate(['/login']).then(() => {
+          window.location.reload(); // Reîmprospătează pagina
+        });
+      })
+      .catch((err) => {
+        alert(err);
+      });
+  }
+  signOutLogin() {
     return this.afs.signOut();
+  }
+
+  SendVerificationMail() {
+    return this.afs.currentUser
+      .then((u: any) =>
+        u.sendEmailVerification({
+          url: 'http://localhost:4200/login',
+        })
+      )
+      .then(() => {
+        this.router.navigate(['calendar']);
+      });
   }
 }
 interface User {

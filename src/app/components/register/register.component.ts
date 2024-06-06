@@ -1,5 +1,11 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
+import {
+  getFunctions,
+  httpsCallable,
+  httpsCallableFromURL,
+} from 'firebase/functions';
 
 @Component({
   selector: 'app-register',
@@ -8,8 +14,9 @@ import { AuthService } from 'src/app/services/auth.service';
 })
 export class RegisterComponent {
   email: string = '';
+  private functions = getFunctions();
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private route: Router) {}
 
   generateRandomPassword(length: number): string {
     const chars =
@@ -28,9 +35,7 @@ export class RegisterComponent {
       .then(() => {
         console.log('User registered successfully');
         console.log(password);
-      })
-      .catch((error) => {
-        console.error('Error registering user:', error);
+        this.route.navigate(['calendar']);
       });
   }
 }

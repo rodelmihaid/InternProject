@@ -1,4 +1,4 @@
-<div *ngIf="isAdmin == true" class="flex flex-col">
+<div *ngIf="isAdmin() == true" class="flex flex-col">
   <div class="flex flex-row justify-center gap-10">
     <mat-form-field appearance="fill">
       <mat-label>Start Date</mat-label>
@@ -24,6 +24,24 @@
       <mat-datepicker #picker2></mat-datepicker>
     </mat-form-field>
   </div>
+
+  <div class="flex gap-10">
+    <button
+      routerLink="/register"
+      class="mt-2 p-2 bg-blue-500 text-white rounded font-extrabold"
+    >
+      Create account
+    </button>
+    <button
+      routerLink="/users"
+      class="mt-2 p-2 bg-blue-500 text-white rounded font-extrabold"
+    >
+      Show users
+    </button>
+  </div>
+</div>
+
+<div *ngIf="months.length > 0">
   <div class="flex flex-row justify-center gap-20">
     <button
       class="mt-2 p-2 bg-blue-500 text-white rounded font-extrabold"
@@ -37,24 +55,19 @@
     >
       Next
     </button>
-  </div>
-  <div class="flex">
     <button
-      routerLink="/register"
       class="mt-2 p-2 bg-blue-500 text-white rounded font-extrabold"
+      (click)="logout()"
     >
-      Register
+      Logout
     </button>
   </div>
-</div>
-
-<div *ngIf="months.length > 0">
   <div *ngFor="let month of months">
     <div
       *ngIf="month.month === currentViewMonth && month.year === currentViewYear"
     >
       <h2>{{ month.year }}-{{ month.month + 1 }}</h2>
-      <div class="flex flex-row justify-around gap-2">
+      <div class="flex flex-row justify-around gap-2 border-2">
         <div class="text-center font-bold text-2xl">Su</div>
         <div class="text-center font-bold text-2xl">Mo</div>
         <div class="text-center font-bold text-2xl">Tu</div>
@@ -63,10 +76,10 @@
         <div class="text-center font-bold text-2xl">Fr</div>
         <div class="text-center font-bold text-2xl">Sa</div>
       </div>
-      <div class="grid grid-cols-7 gap-1">
+      <div class="grid grid-cols-7">
         <div
           *ngFor="let day of month.days"
-          class="p-2 text-center hover:bg-blue-100 rounded"
+          class="p-2 text-center hover:bg-blue-100 rounded border-2"
         >
           <button
             (click)="selectDay(day, month)"
@@ -107,13 +120,7 @@
           <mat-option value="Remote">Remote</mat-option>
         </mat-select>
       </mat-form-field>
-      <!-- <input
-        type="text"
-        [(ngModel)]="eventTitle"
-        name="titlul"
-        placeholder="Titlul evenimentului"
-        class="border p-2 rounded w-full"
-      /> -->
+
       <div class="flex justify-around py-10 gap-3">
         <button
           type="button"
