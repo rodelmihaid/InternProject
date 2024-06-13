@@ -1,0 +1,192 @@
+<div class="container md:mt-24 mt-16">
+  <div class="grid grid-cols-1 pb-8 text-center">
+    <div class="text-customOrange-400 text-base font-medium uppercase mb-2">
+      Starting steps
+    </div>
+    <div class="mb-4 md:text-2xl text-xl font-medium dark:text-white">
+      Welcome aboard, {{ email }}
+    </div>
+
+    <div class="text-slate-400 dark:text-slate-300 max-w-xl mx-auto">
+      Follow the steps displayed below
+    </div>
+  </div>
+  <!--end grid-->
+
+  <div class="grid grid-cols-1 mt-8">
+    <div class="timeline relative">
+      <div class="timeline-item">
+        <div class="grid sm:grid-cols-2">
+          <div class="">
+            <div
+              class="duration date-label-left ltr:float-right rtl:float-left md:me-7 relative"
+            >
+              <img
+                src="assets/images/svg/design-thinking.svg"
+                class="h-64 w-64"
+                alt=""
+              />
+            </div>
+          </div>
+          <!--end col-->
+          <div class="mt-4 md:mt-0">
+            <div
+              class="event event-description-right ltr:float-left rtl:float-right ltr:text-left rtl:text-right md:ms-7"
+            >
+              <div class="text-lg dark:text-white mb-1 font-medium">
+                First step
+              </div>
+              <p class="timeline-subtitle mt-3 mb-0 text-slate-400">
+                Upload your personal documents.
+              </p>
+              <div class="container mx-auto pt-5">
+                <button
+                  *ngIf="!isAdmin"
+                  (click)="uploadDocument()"
+                  class="btn bg-customOrange-400 hover:bg-orange-700 border-cusbg-customOrange-400 hover:border-orange-700 text-white rounded-md"
+                >
+                  Select document
+                </button>
+                <input
+                  type="file"
+                  #fileInput
+                  hidden
+                  (change)="onFileSelected($event)"
+                />
+
+                <div *ngIf="selectedFileName" class="mt-4">
+                  <p class="text-gray-700">
+                    Selected document: {{ selectedFileName }}
+                  </p>
+                  <div class="flex space-x-4 mt-2">
+                    <button
+                      (click)="addDocument()"
+                      class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                      Add the document
+                    </button>
+                    <button
+                      (click)="cancelSelection()"
+                      class="bg-customOrange-400 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+
+                <div *ngIf="documents.length > 0" class="mt-8">
+                  <h3 class="text-xl font-bold">Your documents:</h3>
+                  <ul>
+                    <li
+                      *ngFor="let doc of documents"
+                      class="flex justify-between items-center mt-2"
+                    >
+                      <a
+                        [href]="doc.url"
+                        target="_blank"
+                        class="text-customBlue-400 hover:underline"
+                        >{{ doc.name }}</a
+                      >
+                      <button
+                        (click)="deleteDocument(doc.name)"
+                        class="bg-customOrange-400 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                      >
+                        Delete
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--end col-->
+        </div>
+        <!--end grid-->
+      </div>
+
+      <!--end timeline item-->
+
+      <div class="timeline-item mt-5 pt-4">
+        <div class="grid sm:grid-cols-2">
+          <div class="md:order-1 order-2">
+            <div
+              class="event event-description-left ltr:float-left rtl:float-right ltr:text-right rtl:text-left md:me-7"
+            >
+              <div class="text-lg dark:text-white mb-1 font-medium">
+                Second step
+              </div>
+              <p class="timeline-subtitle mt-3 mb-0 text-slate-400">
+                After signing the contract, we will schedule your medical
+                check-up at the Medicover clinic. You will be contacted to
+                confirm the appointment. On your first day of activity, you will
+                go to SEATBELT at 9:00 AM to undergo the Occupational Safety
+                training. You can find the contact details on the website:
+                <a
+                  target="_blank"
+                  class="text-customOrange-400"
+                  href="https://www.seatbelt.ro/"
+                  >www.seatbelt.ro</a
+                >
+              </p>
+            </div>
+          </div>
+          <!--end col-->
+          <div class="md:order-2 order-1">
+            <div class="duration duration-right md:ms-7 relative">
+              <img
+                src="assets/images/svg/office-desk.svg"
+                class="h-64 w-64"
+                alt=""
+              />
+            </div>
+          </div>
+          <!--end col-->
+        </div>
+        <!--end grid-->
+      </div>
+      <!--end timeline item-->
+
+      <div class="timeline-item mt-5 pt-4">
+        <div class="grid sm:grid-cols-2">
+          <div class="mt-4 mt-sm-0">
+            <div
+              class="duration date-label-left ltr:float-right rtl:float-left md:me-7 relative"
+            >
+              <img
+                src="assets/images/svg/coding.svg"
+                class="h-64 w-64"
+                alt=""
+              />
+            </div>
+          </div>
+          <!--end col-->
+          <div class="mt-4 mt-sm-0">
+            <div
+              class="event event-description-right ltr:float-left rtl:float-right ltr:text-left rtl:text-right md:ms-7"
+            >
+              <div class="text-lg dark:text-white mb-1 font-medium">
+                Last step
+              </div>
+              <div class="timeline-subtitle mt-3 mb-0 text-slate-400">
+                Choose one of the presented project ideas or create a new
+                project based on your own idea!
+              </div>
+              <div class="container mx-auto pt-5">
+                <button
+                  *ngIf="!isAdmin"
+                  routerLink="/projects"
+                  class="btn bg-customOrange-400 hover:bg-orange-700 border-cusbg-customOrange-400 hover:border-orange-700 text-white rounded-md"
+                >
+                  See project
+                </button>
+              </div>
+            </div>
+          </div>
+          <!--end col-->
+        </div>
+        <!--end grid-->
+      </div>
+      <!--end timeline item-->
+    </div>
+  </div>
+</div>

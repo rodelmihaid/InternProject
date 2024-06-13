@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -6,8 +7,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
-  ngOnInit(): void {
-    console.log(localStorage.getItem('role'));
-  }
+  constructor(public authService: AuthService) {}
+  ngOnInit(): void {}
   title = 'internProject';
 }

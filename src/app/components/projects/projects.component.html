@@ -1,0 +1,218 @@
+<!-- Start -->
+<section class="relative md:py-24 py-16" id="blog">
+  <div class="container">
+    <div
+      *ngIf="
+        !(assignedProject$ | async)?.assignedProjectId;
+        else assignedProjectView
+      "
+    >
+      <div class="grid grid-cols-1 pb-8 text-center">
+        <div class="text-customOrange-400 text-base font-medium uppercase mb-2">
+          Projects
+        </div>
+        <div class="mb-4 md:text-2xl text-xl font-medium dark:text-white">
+          We offer you the following project ideas
+        </div>
+
+        <div class="text-slate-400 dark:text-slate-300 max-w-xl mx-auto">
+          Choose carefully the project that you think would suit you
+        </div>
+      </div>
+      <button
+        class="btn bg-customOrange-400 mt-8 rounded text-white"
+        *ngIf="isAdmin"
+        (click)="openForm()"
+      >
+        Add Project
+      </button>
+      <!--end grid-->
+
+      <div class="text-center mb-8">
+        <label for="departmentFilter" class="block text-gray-500"
+          >Filter by Department</label
+        >
+        <select
+          id="departmentFilter"
+          [(ngModel)]="selectedDepartment"
+          (change)="filterProjects()"
+          class="form-input text-black w-full max-w-xs mx-auto"
+        >
+          <option class="text-gray-400" value="">All Departments</option>
+          <option class="text-gray-400" value="Development">Development</option>
+          <option class="text-gray-400" value="Support">Support</option>
+          <option class="text-gray-400" value="Implementation">
+            Implementation
+          </option>
+        </select>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-6 mt-20">
+        <div
+          *ngFor="let item of filteredProjects"
+          class="flex flex-col justify-start relative rounded-md shadow shadow-slate-200 bg-gray-50 hover:ease-in-out hover:mt-[-20px]"
+        >
+          <div class="content p-6 flex flex-col justify-end gap-2">
+            <div
+              class="text-lg text-customOrange-400 transition-all duration-500 ease-in-out font-medium"
+            >
+              {{ item.title }} ({{ item.department }})
+            </div>
+            <div class="text-slate-400 mt-3">{{ item.description }}</div>
+
+            <div class="mt-5 flex gap-4">
+              <button
+                *ngIf="isAdmin"
+                class="bg-customBlue-400 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                (click)="confirmDelete(item)"
+              >
+                Delete
+              </button>
+              <button
+                *ngIf="isAdmin"
+                class="bg-customOrange-400 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+                (click)="openForm(item)"
+              >
+                Edit
+              </button>
+              <button
+                *ngIf="!isAdmin"
+                class="btn btn-link text-customBlue-400 hover:text-orange-600 after:bg-orange-600 transition duration-500"
+                (click)="assignProject(item.id)"
+              >
+                Assign Project
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--end grid-->
+    </div>
+
+    <ng-template #assignedProjectView>
+      <div class="grid grid-cols-1 pb-8 text-center">
+        <div class="text-customOrange-400 text-base font-medium uppercase mb-2">
+          Assigned Project
+        </div>
+        <div class="mb-4 md:text-2xl text-xl font-medium dark:text-white">
+          You have already been assigned a project
+        </div>
+
+        <div class="text-slate-400 dark:text-slate-300 max-w-xl mx-auto">
+          Below is your assigned project.
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-6 mt-20">
+        <div *ngFor="let item of filteredProjects">
+          <div
+            class="flex flex-col justify-start relative rounded-md shadow shadow-slate-200 bg-gray-50 hover:ease-in-out hover:mt-[-20px]"
+          >
+            <div
+              *ngIf="item.id === (assignedProject$ | async)?.assignedProjectId"
+            >
+              <div class="content p-6 flex flex-col justify-end gap-2">
+                <div
+                  class="text-lg text-customOrange-400 transition-all duration-500 ease-in-out font-medium"
+                >
+                  {{ item.title }} ({{ item.department }})
+                </div>
+                <div class="text-slate-400 mt-3">{{ item.description }}</div>
+                <button
+                  (click)="changeProject()"
+                  class="btn bg-customOrange-400 rounded text-white"
+                >
+                  Change project
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+  <!--end container-->
+
+  <div
+    *ngIf="showForm"
+    class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center"
+  >
+    <div class="bg-white p-8 rounded-lg shadow-lg w-[400px] h-[400px]">
+      <h2 class="text-xl mb-4">
+        {{ isEditMode ? "Edit Project" : "Add New Project" }}
+      </h2>
+      <form (ngSubmit)="addProject()">
+        <div class="mb-4">
+          <label class="block text-gray-700">Department</label>
+          <select
+            [(ngModel)]="newProject.department"
+            name="department"
+            class="form-input"
+            required
+          >
+            <option value="" disabled>Select Department</option>
+            <option value="Development">Development</option>
+            <option value="Support">Support</option>
+            <option value="Implementation">Implementation</option>
+          </select>
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700">Title</label>
+          <input
+            type="text"
+            [(ngModel)]="newProject.title"
+            name="title"
+            class="form-input"
+            required
+          />
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700">Description</label>
+          <textarea
+            [(ngModel)]="newProject.description"
+            name="description"
+            class="form-input"
+            required
+          ></textarea>
+        </div>
+        <div class="flex justify-end">
+          <button
+            type="button"
+            class="btn btn-secondary mr-2"
+            (click)="closeForm()"
+          >
+            Cancel
+          </button>
+          <button type="submit" class="btn text-white bg-customOrange-400">
+            {{ isEditMode ? "Edit Project" : "Add Project" }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div
+    *ngIf="showDeleteConfirmation"
+    class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center"
+  >
+    <div class="bg-white p-8 rounded-lg shadow-lg">
+      <h2 class="text-xl mb-4">
+        Are you sure you want to delete this project?
+      </h2>
+      <div class="flex justify-end">
+        <button
+          type="button"
+          class="btn btn-secondary mr-2"
+          (click)="cancelDelete()"
+        >
+          Cancel
+        </button>
+        <button type="button" class="btn btn-primary" (click)="deleteProject()">
+          Yes
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+<!--end section-->
+<!-- End -->

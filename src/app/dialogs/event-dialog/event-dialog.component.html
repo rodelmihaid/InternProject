@@ -1,0 +1,16 @@
+<h2 mat-dialog-title>
+  Activități în ziua {{ data.day }} {{ data.month | monthName }}
+</h2>
+<mat-dialog-content>
+  <ul>
+    <li *ngFor="let event of data.events">
+      <strong>{{ event.text }}</strong
+      >-> {{ event.startTime }} ~ {{ event.endTime }}
+    </li>
+  </ul>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button class="bg-customOrange-400" (click)="onClose()">
+    Închide
+  </button>
+</mat-dialog-actions>

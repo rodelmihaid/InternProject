@@ -1,0 +1,218 @@
+/*********************************/
+/*             Menu              */
+/*===============================*/
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background-color: transparent;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  transition: all 0.5s;
+  font-family: "Rubik", sans-serif;
+}
+
+.navbar .navigation {
+  width: 100%;
+  margin: 0;
+}
+
+.navbar .navigation .navbar-nav {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: row;
+  overflow-y: scroll;
+  height: 6rem;
+}
+
+.navbar .navigation .navbar-nav .nav-item {
+  position: relative;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.navbar .navigation .navbar-nav .nav-link {
+  display: block;
+  padding: 0.75rem;
+  color: #0f172a; /* slate-900 */
+}
+
+.navbar .navigation .navbar-nav .nav-link:hover {
+  color: #ea580c; /* orange-600 */
+}
+
+.navbar .navigation .navbar-nav .nav-link.dark {
+  color: rgba(255, 255, 255, 0.6); /* white/60 */
+}
+
+.navbar .navigation .navbar-nav .nav-link.dark:hover {
+  color: white;
+}
+
+.navbar .navigation .navbar-nav .active .nav-link {
+  color: #ea580c; /* orange-600 */
+}
+
+.navbar .navigation .navbar-nav .active .nav-link.dark {
+  color: white;
+}
+
+.navbar .navbar-brand {
+  margin-right: 3rem;
+  padding: 0;
+}
+
+.navbar .navbar-brand .l-dark,
+.navbar .navbar-brand .logo-dark-mode {
+  display: none;
+}
+
+.navbar .navbar-brand .l-light,
+.navbar .navbar-brand .logo-light-mode {
+  display: inline-block;
+}
+
+@media (max-width: 991.98px) {
+  .navbar .navbar-brand .l-dark {
+    display: inline-block !important;
+  }
+
+  .navbar .navbar-brand .l-light {
+    display: none !important;
+  }
+}
+
+.navbar .menu-social .login-btn-primary {
+  display: none;
+}
+
+.navbar .menu-social .login-btn-light {
+  display: inline-block;
+}
+
+@media (max-width: 991.98px) {
+  .navbar .menu-social .login-btn-primary {
+    display: inline-block !important;
+  }
+
+  .navbar .menu-social .login-btn-light {
+    display: none !important;
+  }
+}
+
+.navbar.is-sticky {
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar.is-sticky .navbar-brand .l-dark {
+  display: inline-block;
+}
+
+.navbar.is-sticky .navbar-brand .l-light {
+  display: none;
+}
+
+.navbar.is-sticky .menu-social .login-btn-primary {
+  display: inline-block;
+}
+
+.navbar.is-sticky .menu-social .login-btn-light {
+  display: none;
+}
+
+@media (min-width: 992px) {
+  .navbar {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .navbar .navigation {
+    display: flex;
+    width: auto;
+  }
+
+  .navbar .navigation .navbar-nav {
+    height: auto;
+    margin-top: 0;
+    overflow: visible;
+  }
+
+  .navbar .navigation .navbar-nav .nav-link {
+    border: 0;
+  }
+
+  .navbar .navigation .navbar-nav .nav-link:hover {
+    background-color: transparent;
+  }
+
+  .navbar .navigation .navbar-nav.nav-light .nav-link {
+    display: block;
+    padding: 0.75rem;
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
+  .navbar .navigation .navbar-nav.nav-light .nav-link:hover {
+    color: white !important;
+  }
+
+  .navbar .navigation .navbar-nav.nav-light .active .nav-link {
+    color: white !important;
+  }
+
+  .navbar .nav-icons .collapse-btn {
+    display: none;
+  }
+
+  .navbar.is-sticky {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .navbar.is-sticky .navbar-nav .nav-link {
+    color: #0f172a; /* slate-900 */
+  }
+
+  .navbar.is-sticky .navbar-nav .active .nav-link {
+    color: #ea580c; /* orange-600 */
+  }
+
+  .navbar.is-sticky .navbar-nav.nav-light .nav-link {
+    color: #0f172a !important; /* slate-900 */
+  }
+
+  .navbar.is-sticky .navbar-nav.nav-light .nav-link:hover {
+    color: #ea580c !important; /* orange-600 */
+  }
+
+  .navbar.is-sticky .navbar-nav.nav-light .active .nav-link {
+    color: #ea580c !important; /* orange-600 */
+  }
+}
+
+@media (max-width: 991px) {
+  .navbar {
+    background-color: white !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+    background-color: #1e293b !important; /* slate-900 */
+  }
+
+  .navbar .navigation .navbar-nav {
+    display: block;
+    height: 21.25rem;
+  }
+
+  .navbar .navigation .navbar-nav .nav-link {
+    color: #0f172a; /* slate-900 */
+  }
+
+  .navbar .navigation .navbar-nav .active .nav-link {
+    color: #ea580c; /* orange-600 */
+  }
+
+  .navbar .navigation .navbar-nav .menu-social {
+    margin-bottom: 1.25rem !important;
+  }
+}

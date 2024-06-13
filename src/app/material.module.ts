@@ -14,6 +14,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
+import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [],
@@ -28,6 +30,8 @@ import { MatSelectModule } from '@angular/material/select';
     MatListModule,
     MatFormFieldModule,
     FormsModule,
+    NgxMaterialTimepickerModule,
+    MatDialogModule,
   ],
   exports: [
     MatMenuModule,
@@ -46,6 +50,8 @@ import { MatSelectModule } from '@angular/material/select';
     MatInputModule,
     MatNativeDateModule,
     MatSelectModule,
+    NgxMaterialTimepickerModule,
+    MatDialogModule,
   ],
 })
 export class MaterialModule {}

@@ -1,0 +1,46 @@
+<div class="relative overflow-x-auto px-10 pt-20">
+  <div class="text-2xl font-extrabold py-10 text-customBlue-400">
+    Documents and Users
+  </div>
+  <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+    <thead
+      class="text-lg text-customOrange-400 uppercase bg-gray-50 dark:bg-gray-700"
+    >
+      <tr>
+        <th scope="col" class="px-6 py-3">User Email</th>
+        <th scope="col" class="px-6 py-3">Id</th>
+        <th scope="col" class="px-6 py-3">Document Name</th>
+        <th scope="col" class="px-6 py-3">Download</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        *ngFor="let doc of documents$ | async"
+        class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+      >
+        <td class="px-6 py-4">{{ doc.user?.email }}</td>
+        <td class="px-6 py-4">
+          {{ doc.id }}
+        </td>
+        <td
+          class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+        >
+          <div *ngFor="let key of getDocumentKeys(doc)" class="pb-8">
+            <span *ngIf="isDownloadURL(key)">{{ key }}</span>
+          </div>
+        </td>
+        <td class="px-6 py-4">
+          <div *ngFor="let key of getDocumentKeys(doc)" class="pb-2">
+            <button
+              *ngIf="isDownloadURL(key)"
+              class="bg-customBlue-400 hover:bg-customOrange-400 text-white font-bold py-2 px-4 rounded"
+              (click)="downloadFile(key, doc.id)"
+            >
+              Download
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Observable, map } from 'rxjs';
-import { EventToFirebase } from 'src/app/components/calendar/calendar.component';
+import {
+  Event,
+  EventToFirebase,
+} from 'src/app/components/calendar/calendar.component';
 
 @Injectable({
   providedIn: 'root',
@@ -9,24 +12,21 @@ import { EventToFirebase } from 'src/app/components/calendar/calendar.component'
 export class EventsService {
   constructor(private firestore: AngularFirestore) {}
 
-  addEvent(event: EventToFirebase): Promise<any> {
+  addEvent(event: Event): Promise<any> {
     return this.firestore.collection('events').add(event);
   }
 
-  getEventList(): Observable<EventService[]> {
+  getEventList(): Observable<Event[]> {
     return this.firestore
-      .collection('events')
-      .snapshotChanges()
-      .pipe(
-        map((actions) =>
-          actions.map((a) => {
-            const data = a.payload.doc.data() as EventService;
-            const id = a.payload.doc.id;
-            data.id = id;
-            return { ...data }; // Returnează datele împreună cu ID-ul documentului
-          })
-        )
-      );
+      .collection<Event>('events')
+      .valueChanges({ idField: 'id' });
+  }
+  deleteEvent(eventId: string): Promise<void> {
+    return this.firestore.collection('events').doc(eventId).delete();
+  }
+
+  updateEvent(eventId: string, event: Event): Promise<void> {
+    return this.firestore.collection('events').doc(eventId).update(event);
   }
 }
 export interface EventService {

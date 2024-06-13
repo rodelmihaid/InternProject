@@ -8,6 +8,10 @@ import { LoginGuard } from './services/guard/login.guard';
 import { RegisterComponent } from './components/register/register.component';
 import { UsersComponent } from './components/users/users.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
+import { HomeComponent } from './components/home/home.component';
+import { DocumentsComponent } from './components/documents/documents.component';
+import { ProjectsComponent } from './components/projects/projects.component';
+import { ContactComponent } from './components/contact/contact.component';
 
 const routes: Routes = [
   {
@@ -16,13 +20,17 @@ const routes: Routes = [
     pathMatch: 'full',
   },
   { path: 'login', component: LoginComponent },
-  { path: 'calendar', component: CalendarComponent, canActivate: [AuthGuard] }, //, canActivate: [AuthGuard]
-  { path: 'register', component: RegisterComponent, canActivate: [AuthGuard] },
+  { path: 'calendar', component: CalendarComponent }, //, canActivate: [AuthGuard]
+  { path: 'register', component: RegisterComponent },
   {
     path: 'forgot-password',
     component: ForgotPasswordComponent,
   },
-  { path: 'users', component: UsersComponent, canActivate: [AuthGuard] },
+  { path: 'users', component: UsersComponent },
+  { path: 'home', component: HomeComponent },
+  { path: 'projects', component: ProjectsComponent },
+  { path: 'documents', component: DocumentsComponent },
+  { path: 'contact', component: ContactComponent },
 ];
 
 @NgModule({

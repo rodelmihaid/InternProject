@@ -1,5 +1,5 @@
-<div *ngIf="isAdmin() == true" class="flex flex-col">
-  <div class="flex flex-row justify-center gap-10">
+<div class="flex flex-col">
+  <div class="flex flex-row justify-center gap-10" *ngIf="isAdmin">
     <mat-form-field appearance="fill">
       <mat-label>Start Date</mat-label>
       <input
@@ -25,49 +25,92 @@
     </mat-form-field>
   </div>
 
-  <div class="flex gap-10">
+  <!-- <div class="flex gap-10">
     <button
       routerLink="/register"
-      class="mt-2 p-2 bg-blue-500 text-white rounded font-extrabold"
+      class="mt-2 p-2 bg-customOrange-400 text-white rounded font-extrabold"
     >
       Create account
     </button>
     <button
       routerLink="/users"
-      class="mt-2 p-2 bg-blue-500 text-white rounded font-extrabold"
+      class="mt-2 p-2 bg-customOrange-400 text-white rounded font-extrabold"
     >
       Show users
     </button>
   </div>
 </div>
+<button
+  class="mt-2 p-2 bg-customOrange-400 text-white rounded font-extrabold"
+  (click)="logout()"
+>
+  Logout
+</button> -->
 
-<div *ngIf="months.length > 0">
-  <div class="flex flex-row justify-center gap-20">
-    <button
-      class="mt-2 p-2 bg-blue-500 text-white rounded font-extrabold"
-      (click)="goToPreviousMonth(startDate)"
-    >
-      Prev
-    </button>
-    <button
-      class="mt-2 p-2 bg-blue-500 text-white rounded font-extrabold"
-      (click)="goToNextMonth(endDate)"
-    >
-      Next
-    </button>
-    <button
-      class="mt-2 p-2 bg-blue-500 text-white rounded font-extrabold"
-      (click)="logout()"
-    >
-      Logout
-    </button>
-  </div>
-  <div *ngFor="let month of months">
-    <div
-      *ngIf="month.month === currentViewMonth && month.year === currentViewYear"
-    >
-      <h2>{{ month.year }}-{{ month.month + 1 }}</h2>
-      <div class="flex flex-row justify-around gap-2 border-2">
+  <div *ngIf="months.length > 0" class="container mx-auto mt-10">
+    <div *ngFor="let month of months">
+      <div
+        class="bg-white rounded shadow header flex flex-col justify-between border-b"
+        *ngIf="
+          month.month === currentViewMonth && month.year === currentViewYear
+        "
+      >
+        <div
+          class="border-b text-lg font-bold flex flex-row justify-between items-center px-12"
+        >
+          <div>{{ month.year }} {{ month.month + 1 | monthName }}</div>
+          <div class="buttons">
+            <button (click)="goToPreviousMonth(startDate)" class="p-1">
+              <svg
+                width="1em"
+                fill="gray"
+                height="1em"
+                viewBox="0 0 16 16"
+                class="bi bi-arrow-left-circle"
+                fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+                />
+                <path
+                  fill-rule="evenodd"
+                  d="M8.354 11.354a.5.5 0 0 0 0-.708L5.707 8l2.647-2.646a.5.5 0 1 0-.708-.708l-3 3a.5.5 0 0 0 0 .708l3 3a.5.5 0 0 0 .708 0z"
+                />
+                <path
+                  fill-rule="evenodd"
+                  d="M11.5 8a.5.5 0 0 0-.5-.5H6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 .5-.5z"
+                />
+              </svg>
+            </button>
+            <button (click)="goToNextMonth(endDate)" class="p-1">
+              <svg
+                width="1em"
+                fill="gray"
+                height="1em"
+                viewBox="0 0 16 16"
+                class="bi bi-arrow-right-circle"
+                fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+                />
+                <path
+                  fill-rule="evenodd"
+                  d="M7.646 11.354a.5.5 0 0 1 0-.708L10.293 8 7.646 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0z"
+                />
+                <path
+                  fill-rule="evenodd"
+                  d="M4.5 8a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5z"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <!-- <div class="flex flex-row justify-around gap-2 border-2">
         <div class="text-center font-bold text-2xl">Su</div>
         <div class="text-center font-bold text-2xl">Mo</div>
         <div class="text-center font-bold text-2xl">Tu</div>
@@ -75,67 +118,196 @@
         <div class="text-center font-bold text-2xl">Th</div>
         <div class="text-center font-bold text-2xl">Fr</div>
         <div class="text-center font-bold text-2xl">Sa</div>
-      </div>
-      <div class="grid grid-cols-7">
-        <div
-          *ngFor="let day of month.days"
-          class="p-2 text-center hover:bg-blue-100 rounded border-2"
-        >
-          <button
-            (click)="selectDay(day, month)"
-            *ngIf="day !== 0; else emptyCell"
-            class="w-[100px] h-[100px] font-bold"
-          >
-            {{ day }}
-            <div *ngIf="events[day]">
-              <div *ngFor="let event of events[day]">
-                <div *ngIf="event.month == currentViewMonth + 1">
-                  {{ event.text }}
-                </div>
-              </div>
-            </div>
-          </button>
-          <ng-template #emptyCell
-            ><div class="w-[100px] h-[100px]"></div
-          ></ng-template>
-        </div>
+      </div> -->
+        <table class="w-full">
+          <thead>
+            <tr>
+              <th
+                class="p-2 border-r h-10 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 xl:text-sm text-xs"
+              >
+                <span class="xl:block lg:block md:block sm:block hidden"
+                  >Sunday</span
+                >
+                <span class="xl:hidden lg:hidden md:hidden sm:hidden block"
+                  >Sun</span
+                >
+              </th>
+              <th
+                class="p-2 border-r h-10 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 xl:text-sm text-xs"
+              >
+                <span class="xl:block lg:block md:block sm:block hidden"
+                  >Monday</span
+                >
+                <span class="xl:hidden lg:hidden md:hidden sm:hidden block"
+                  >Mon</span
+                >
+              </th>
+              <th
+                class="p-2 border-r h-10 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 xl:text-sm text-xs"
+              >
+                <span class="xl:block lg:block md:block sm:block hidden"
+                  >Tuesday</span
+                >
+                <span class="xl:hidden lg:hidden md:hidden sm:hidden block"
+                  >Tue</span
+                >
+              </th>
+              <th
+                class="p-2 border-r h-10 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 xl:text-sm text-xs"
+              >
+                <span class="xl:block lg:block md:block sm:block hidden"
+                  >Wednesday</span
+                >
+                <span class="xl:hidden lg:hidden md:hidden sm:hidden block"
+                  >Wed</span
+                >
+              </th>
+              <th
+                class="p-2 border-r h-10 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 xl:text-sm text-xs"
+              >
+                <span class="xl:block lg:block md:block sm:block hidden"
+                  >Thursday</span
+                >
+                <span class="xl:hidden lg:hidden md:hidden sm:hidden block"
+                  >Thu</span
+                >
+              </th>
+              <th
+                class="p-2 border-r h-10 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 xl:text-sm text-xs"
+              >
+                <span class="xl:block lg:block md:block sm:block hidden"
+                  >Friday</span
+                >
+                <span class="xl:hidden lg:hidden md:hidden sm:hidden block"
+                  >Fri</span
+                >
+              </th>
+              <th
+                class="p-2 border-r h-10 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 xl:text-sm text-xs"
+              >
+                <span class="xl:block lg:block md:block sm:block hidden"
+                  >Saturday</span
+                >
+                <span class="xl:hidden lg:hidden md:hidden sm:hidden block"
+                  >Sat</span
+                >
+              </th>
+            </tr>
+          </thead>
+          <tbody class="text-center h-10">
+            <ng-container
+              *ngFor="
+                let week of getWeeksInMonth(currentViewYear, currentViewMonth)
+              "
+            >
+              <tr>
+                <td
+                  *ngFor="let day of week"
+                  [ngClass]="
+                    getDayClass(day, currentViewMonth, currentViewYear)
+                  "
+                  class="border p-1 h-20 lg:h-40 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-16 overflow-auto transition cursor-pointer duration-500 ease hover:bg-gray-300"
+                >
+                  <button
+                    (click)="
+                      isAdmin
+                        ? selectDay(day, currentViewMonth)
+                        : openEventDialog(day, currentViewMonth)
+                    "
+                    *ngIf="day !== 0; else emptyCell"
+                    class="w-[25px] h-[25px] lg:w-[100px] lg:h-[100px] text-gray-500"
+                  >
+                    {{ day }}
+                    <div *ngIf="events[day]">
+                      <div *ngFor="let event of events[day]">
+                        <div
+                          *ngIf="event.month == currentViewMonth + 1"
+                          class="event bg-customOrange-400 text-white rounded text-[7px] my-1 lg:p-1 lg:text-sm lg:mb-1"
+                        >
+                          {{ event.text }}
+                        </div>
+                        <div *ngIf="event.month == currentViewMonth + 1">
+                          <button *ngIf="isAdmin" (click)="editEvent(event)">
+                            <mat-icon>edit</mat-icon>
+                          </button>
+                          <button *ngIf="isAdmin" (click)="deleteEvent(event)">
+                            <mat-icon>delete</mat-icon>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                  <ng-template #emptyCell>
+                    <div
+                      class="w-[25px] h-[25px] lg:w-[100px] lg:h-[100px]"
+                    ></div>
+                  </ng-template>
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
       </div>
     </div>
-  </div>
-  <div
-    *ngIf="selectedDay && isAdmin"
-    class="p-4 bg-gray-100 rounded flex items-center justify-center flex-col"
-  >
-    <h3 class="text-lg font-semibold">
-      Adaugă eveniment la data: {{ currentViewYear }}-{{
-        currentViewMonth + 1
-      }}-{{ selectedDay }}
-    </h3>
-    <form>
-      <mat-form-field appearance="fill">
-        <mat-label>Titlul evenimentului</mat-label>
-        <mat-select [(ngModel)]="eventTitle" name="titlul">
-          <mat-option value="Meet">Meet</mat-option>
-          <mat-option value="Training">Training</mat-option>
-          <mat-option value="Remote">Remote</mat-option>
-        </mat-select>
-      </mat-form-field>
+    <div
+      *ngIf="selectedDay && isAdmin"
+      class="p-4 bg-gray-100 rounded flex items-center justify-center flex-col"
+    >
+      <h3 class="text-lg font-semibold">
+        Adaugă eveniment la data: {{ currentViewYear }}-{{
+          currentViewMonth + 1 | monthName
+        }}-{{ selectedDay }}
+      </h3>
+      <form>
+        <mat-form-field appearance="fill">
+          <mat-label>Titlul evenimentului</mat-label>
+          <mat-select [(ngModel)]="eventTitle" name="titlul">
+            <mat-option value="Meet">Meet</mat-option>
+            <mat-option value="Training">Training</mat-option>
+            <mat-option value="Remote">Remote</mat-option>
+          </mat-select>
+        </mat-form-field>
 
-      <div class="flex justify-around py-10 gap-3">
-        <button
-          type="button"
-          class="mt-2 p-2 bg-blue-500 text-white rounded"
-          (click)="addEvent(eventTitle)"
-        >
-          Adaugă Eveniment
-        </button>
-        <button
-          class="mt-2 p-2 bg-blue-500 text-white rounded font-extrabold min-w-[100px]"
-          (click)="closeForm()"
-        >
-          &times;
-        </button>
-      </div>
-    </form>
+        <mat-form-field appearance="fill">
+          <mat-label>Ora de început</mat-label>
+          <input
+            matInput
+            [ngxTimepicker]="startTimePicker"
+            readonly
+            [(ngModel)]="startTime"
+            name="startTime"
+          />
+          <ngx-material-timepicker #startTimePicker></ngx-material-timepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Ora de sfârșit</mat-label>
+          <input
+            matInput
+            [ngxTimepicker]="endTimePicker"
+            readonly
+            [(ngModel)]="endTime"
+            name="endTime"
+          />
+          <ngx-material-timepicker #endTimePicker></ngx-material-timepicker>
+        </mat-form-field>
+
+        <div class="flex justify-around py-10 gap-3">
+          <button
+            type="button"
+            class="mt-2 p-2 bg-customOrange-400 text-white rounded"
+            (click)="addEvent(eventTitle)"
+          >
+            Adaugă Eveniment
+          </button>
+          <button
+            class="mt-2 p-2 bg-customOrange-400 text-white rounded font-extrabold min-w-[100px]"
+            (click)="closeForm()"
+          >
+            &times;
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>

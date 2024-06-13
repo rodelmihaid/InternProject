@@ -8,7 +8,16 @@ module.exports = {
       poppins: ["Poppins", "sans-serif"],
       rubik: ["Rubik", "sans-serif"],
     },
-
+    extend: {
+      colors: {
+        customOrange: {
+          400: "rgb(238, 125, 16)",
+        },
+        customBlue: {
+          400: "rgb(0, 44, 104)",
+        },
+      },
+    },
     screens: {
       sm: "576px",
       md: "768px",

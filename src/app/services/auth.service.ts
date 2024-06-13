@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Router } from '@angular/router';
-import { Observable, map, of, switchMap } from 'rxjs';
+import { BehaviorSubject, Observable, map, of, switchMap } from 'rxjs';
 import Swal from 'sweetalert2';
 
 @Injectable({
@@ -12,35 +12,51 @@ export class AuthService {
   user$: Observable<User | any>;
   userData: any;
   isAuthenticated?: boolean;
-  isAdmin?: boolean;
+  isAdmin$: Observable<boolean>;
+  private isAdminSubject: BehaviorSubject<boolean>;
+  private userIdSubject: BehaviorSubject<string | null>;
+  userId$: Observable<string | null>;
 
   constructor(
     private afs: AngularFireAuth,
     private firestore: AngularFirestore,
     private router: Router
   ) {
+    this.isAdminSubject = new BehaviorSubject<boolean>(false);
+    this.userIdSubject = new BehaviorSubject<string | null>(null);
+
+    this.userId$ = this.userIdSubject.asObservable();
+    console.log(this.userId$);
+
+    this.isAdmin$ = this.isAdminSubject.asObservable();
     this.user$ = this.afs.authState;
     console.log(this.user$);
 
     this.user$.subscribe((user) => {
       if (user) {
+        this.userIdSubject.next(user.uid);
+
         // Dacă există un utilizator autentificat, obține datele utilizatorului din Firestore
         this.firestore
           .doc<any>(`users/${user.uid}`)
           .valueChanges()
           .subscribe((userData) => {
-            this.userData = JSON.stringify(userData);
+            this.userData = userData;
             console.log(this.userData);
             console.log('AICITATA');
+            this.isAdminSubject.next(this.userData.isAdmin);
             this.isAuthenticated = true;
+            console.log(this.isAdmin$);
+
             console.log(this.isAuthenticated);
           });
       } else {
         this.userData = undefined;
         console.log(this.userData);
-
+        console.log(this.isAdmin$);
+        this.userIdSubject.next(null);
         this.isAuthenticated = false;
-        this.isAdmin = false;
+        this.isAdminSubject.next(false);
       }
     });
   }
@@ -140,7 +156,6 @@ export class AuthService {
               .valueChanges()
               .subscribe((userData: any) => {
                 if (userData) {
-                  this.isAdmin = userData.isAdmin;
                   console.log(userData.isAdmin);
                 }
               });

@@ -27,19 +27,16 @@ export class LoginComponent implements OnInit {
       .then(() => {
         console.log('Login data:', this.loginData);
         console.log('Login successfully');
-        swal
-          .fire({
-            icon: 'success',
-            text: 'You have successfully signed',
-            timer: 2000, // Ascunde automat alerta după 3 secunde
-            timerProgressBar: true, // Bară de progres pentru durata alertei
-            toast: true, // Afișează alerta ca și toast
-            position: 'top-start', // Poziția alertei
-            showConfirmButton: false, // Nu afișa butonul de confirmare
-          })
-          .then(() => {
-            this.router.navigate(['/calendar']);
-          });
+        this.router.navigate(['/home']);
+        swal.fire({
+          icon: 'success',
+          text: 'You have successfully signed',
+          timer: 2000, // Ascunde automat alerta după 3 secunde
+          timerProgressBar: true, // Bară de progres pentru durata alertei
+          toast: true, // Afișează alerta ca și toast
+          position: 'top-start', // Poziția alertei
+          showConfirmButton: false, // Nu afișa butonul de confirmare
+        });
       })
       .catch((err) => {
         this.errorMessage = err.message;

@@ -16,6 +16,14 @@ import { RegisterComponent } from './components/register/register.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { UsersComponent } from './components/users/users.component';
 import { CommonModule } from '@angular/common';
+import { MonthNamePipe } from './pipe/month-name.pipe';
+import { EventDialogComponent } from './dialogs/event-dialog/event-dialog.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { HomeComponent } from './components/home/home.component';
+import { provideStorage, getStorage } from '@angular/fire/storage';
+import { DocumentsComponent } from './components/documents/documents.component';
+import { ProjectsComponent } from './components/projects/projects.component';
+import { ContactComponent } from './components/contact/contact.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +33,13 @@ import { CommonModule } from '@angular/common';
     RegisterComponent,
     ForgotPasswordComponent,
     UsersComponent,
+    MonthNamePipe,
+    EventDialogComponent,
+    NavbarComponent,
+    HomeComponent,
+    DocumentsComponent,
+    ProjectsComponent,
+    ContactComponent,
   ],
   imports: [
     BrowserModule,
@@ -36,6 +51,7 @@ import { CommonModule } from '@angular/common';
     AngularFireAuthModule,
     AngularFirestoreModule,
     CommonModule,
+    provideStorage(() => getStorage()),
   ],
   providers: [],
   bootstrap: [AppComponent],

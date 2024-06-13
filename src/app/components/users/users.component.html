@@ -1,18 +1,29 @@
 <div class="container mx-auto mt-8">
-  <h2 class="text-2xl font-bold mb-4">Users</h2>
-  <table class="min-w-full bg-white">
+  <h2 class="text-2xl font-bold mb-4 text-customOrange-400">Users</h2>
+  <table class="w-full bg-white">
     <thead class="flex items-center justify-center gap-20">
-      <tr>
-        <th class="py-2 px-4 border-b border-gray-200 bg-gray-100">Email</th>
-        <th class="py-2 px-4 border-b border-gray-200 bg-gray-100">Actions</th>
+      <tr class="w-[400px] flex justify-between px-4">
+        <th
+          class="py-2 px-4 border-b text-white border-gray-200 bg-customBlue-400"
+        >
+          Email
+        </th>
+        <th
+          class="py-2 px-4 border-b text-white border-gray-200 bg-customBlue-400"
+        >
+          Actions
+        </th>
       </tr>
     </thead>
     <tbody class="flex items-center justify-center flex-col">
-      <tr *ngFor="let user of users" class="flex justify-between">
-        <td class="py-2 px-4 border-b border-gray-200">{{ user.email }}</td>
-        <td class="py-2 px-4 border-b border-gray-200">
+      <tr
+        *ngFor="let user of users"
+        class="flex justify-between items-center border-2 mb-3 w-[400px]"
+      >
+        <td class="py-2 px-4">{{ user.email }}</td>
+        <td class="py-2 px-4">
           <button
-            class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+            class="bg-customOrange-400 text-white px-4 py-2 rounded hover:bg-gray-400"
             (click)="deleteUser(user.id)"
           >
             Delete
@@ -22,7 +33,7 @@
     </tbody>
   </table>
   <button
-    class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+    class="bg-customOrange-400 text-white px-4 py-2 rounded hover:bg-gray-400"
     routerLink="/calendar"
   >
     Back

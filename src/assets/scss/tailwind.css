@@ -1,0 +1,28 @@
+/* Template Name: Upwind - Angular 16 Landing Page Template
+   Author: Shreethemes
+   Email: support@shreethemes.in
+   Website: https://shreethemes.in
+   Version: 2.0.0
+   Created: March 2022
+   File: Main Css File
+*/
+
+/* FONTS */
+@import url("custom/_fonts.css");
+
+/* general */
+@import url("custom/_general.css");
+
+/* @import url("components/_buttons.scss"); */
+
+/* structure */
+@import url("custom/structure/_topnav.css");
+/* @import url("custom/structure/_footer.scss"); */
+
+/* pages */
+/* @import url("custom/pages/_helper.scss"); */
+/* @import url("custom/pages/_timeline.scss");
+@import url("custom/pages/_contact.scss"); */
+
+/* Plugins */
+@import url("custom/plugins/_testi.css");
