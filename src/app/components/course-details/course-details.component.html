@@ -1,0 +1,45 @@
+<div class="container mt-20 flex flex-col justify-center items-center">
+  <div *ngIf="course">
+    <div class="flex flex-col justify-center items-center gap-4">
+      <div class="text-4xl font-bold mb-4 text-customOrange-400">
+        {{ course.title }}
+      </div>
+      <p class="text-slate-400 mb-4">{{ course.description }}</p>
+    </div>
+    <div class="mt-20 max-w-[500px]">
+      <div *ngFor="let video of course.videoUrls" class="mb-4">
+        <div
+          (click)="toggleVideo(video.videoTitle)"
+          class="bg-customOrange-400 text-white w-[500px] py-2 px-4 rounded hover:bg-orange-300 flex justify-between items-center"
+        >
+          <div>{{ video.videoTitle }}</div>
+          <div
+            *ngIf="userProgress[video.videoTitle]?.status === 'completed'"
+            class="ml-4"
+          >
+            <!-- {{ userProgress[video.videoTitle]?.status }} -->
+            <mat-icon>done</mat-icon>
+          </div>
+          <div
+            *ngIf="userProgress[video.videoTitle]?.status === 'in progress'"
+            class="ml-4"
+          >
+            <!-- {{ userProgress[video.videoTitle]?.status }} -->
+            <mat-icon>hourglass_empty</mat-icon>
+          </div>
+        </div>
+        <div *ngIf="videoToggles[video.videoTitle]" class="mt-2">
+          <video
+            width="100%"
+            controls
+            (timeupdate)="saveUserProgress(video.videoTitle, $event)"
+            (loadedmetadata)="setVideoTime($event, video.videoTitle)"
+          >
+            <source [src]="video.url" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

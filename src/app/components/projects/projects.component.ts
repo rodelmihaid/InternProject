@@ -1,13 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Observable, map, switchMap, of } from 'rxjs';
+import { Observable, map, switchMap, of, Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
+import firebase from 'firebase/compat/app';
 
 interface Project {
   id: string;
   department: string;
   title: string;
   description: string;
+  assignedBy?: string;
 }
 
 interface AssignedProject {
@@ -19,7 +21,7 @@ interface AssignedProject {
   templateUrl: './projects.component.html',
   styleUrls: ['./projects.component.css'],
 })
-export class ProjectsComponent implements OnInit {
+export class ProjectsComponent implements OnInit, OnDestroy {
   projectsData$: Observable<Project[]>;
   assignedProject$: Observable<AssignedProject | null> = of(null);
   showForm: boolean = false;
@@ -30,10 +32,18 @@ export class ProjectsComponent implements OnInit {
   projectToDelete: Project | null = null;
   isEditMode: boolean = false;
 
-  newProject: Project = { id: '', department: '', title: '', description: '' };
+  newProject: Project = {
+    id: '',
+    department: '',
+    title: '',
+    description: '',
+    assignedBy: '',
+  };
   isAdmin: boolean = false;
   projectToEdit: Project | null = null;
   userId: string = '';
+  userEmail: string = '';
+  subscriptions: Subscription[] = [];
 
   constructor(
     private firestore: AngularFirestore,
@@ -48,6 +58,7 @@ export class ProjectsComponent implements OnInit {
             const data = a.payload.doc.data() as Project;
             const id = a.payload.doc.id;
             data.id = id;
+
             return { ...data };
           })
         )
@@ -55,32 +66,46 @@ export class ProjectsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.authService.isAdmin$.subscribe((admin) => {
-      this.isAdmin = admin;
-    });
-    this.authService.user$.subscribe((user) => {
-      this.userId = user?.uid || null;
-      if (this.userId) {
-        this.assignedProject$ = this.firestore
-          .collection<AssignedProject>('assignedProjects')
-          .doc(this.userId)
-          .valueChanges()
-          .pipe(
-            switchMap((assignedProject) => {
-              if (assignedProject) {
-                return of(assignedProject);
-              } else {
-                return of(null);
-              }
-            })
-          );
-      }
-    });
+    this.subscriptions.push(
+      this.authService.isAdmin$.subscribe((admin) => {
+        this.isAdmin = admin;
+      })
+    );
 
-    this.projectsData$.subscribe((projects) => {
-      this.allProjects = projects;
-      this.filterProjects();
-    });
+    this.subscriptions.push(
+      this.authService.user$.subscribe((user) => {
+        this.userId = user?.uid || null;
+        this.userEmail = user?.email || '';
+        console.log(this.userEmail);
+
+        if (this.userId) {
+          this.assignedProject$ = this.firestore
+            .collection<AssignedProject>('assignedProjects')
+            .doc(this.userId)
+            .valueChanges()
+            .pipe(
+              switchMap((assignedProject) => {
+                if (assignedProject) {
+                  return of(assignedProject);
+                } else {
+                  return of(null);
+                }
+              })
+            );
+        }
+      })
+    );
+
+    this.subscriptions.push(
+      this.projectsData$.subscribe((projects) => {
+        this.allProjects = projects;
+        this.filterProjects();
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
   openForm(project?: Project) {
@@ -156,19 +181,79 @@ export class ProjectsComponent implements OnInit {
       const assignedProject = {
         assignedProjectId: projectId,
       };
+
       this.firestore
         .collection('assignedProjects')
         .doc(this.userId)
         .set(assignedProject, { merge: true })
         .then(() => {
-          console.log('Project assigned successfully');
+          // Update the project with the assignedBy field
+          this.firestore
+            .collection('projects')
+            .doc(projectId)
+            .update({ assignedBy: this.userEmail })
+            .then(() => {
+              console.log('Project assigned successfully');
+            })
+            .catch((error) => {
+              console.error('Error updating project with assignedBy: ', error);
+            });
         })
         .catch((error) => {
           console.error('Error assigning project: ', error);
         });
     }
   }
+
   changeProject() {
-    this.firestore.collection('assignedProjects').doc(this.userId).delete();
+    if (this.userId) {
+      // Retrieve the assigned project ID
+      this.firestore
+        .collection('assignedProjects')
+        .doc(this.userId)
+        .get()
+        .subscribe(
+          (assignedProjectDoc) => {
+            const assignedProjectData = assignedProjectDoc.data() as any;
+
+            if (assignedProjectData && assignedProjectData.assignedProjectId) {
+              const assignedProjectId = assignedProjectData.assignedProjectId;
+
+              // Remove the assignedBy field from the project document
+              this.firestore
+                .collection('projects')
+                .doc(assignedProjectId)
+                .update({
+                  assignedBy: firebase.firestore.FieldValue.delete(),
+                })
+                .then(() => {
+                  // Delete the document from the assignedProjects collection
+                  this.firestore
+                    .collection('assignedProjects')
+                    .doc(this.userId)
+                    .delete()
+                    .then(() => {
+                      console.log('Project assignment removed successfully');
+                    })
+                    .catch((error) => {
+                      console.error(
+                        'Error deleting assignment from assignedProjects collection: ',
+                        error
+                      );
+                    });
+                })
+                .catch((error) => {
+                  console.error(
+                    'Error removing assignedBy field from project document: ',
+                    error
+                  );
+                });
+            }
+          },
+          (error) => {
+            console.error('Error retrieving assigned project: ', error);
+          }
+        );
+    }
   }
 }

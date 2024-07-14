@@ -16,6 +16,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [],
@@ -32,6 +33,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     FormsModule,
     NgxMaterialTimepickerModule,
     MatDialogModule,
+    MatProgressSpinnerModule,
   ],
   exports: [
     MatMenuModule,
@@ -52,6 +54,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatSelectModule,
     NgxMaterialTimepickerModule,
     MatDialogModule,
+    MatProgressSpinnerModule,
   ],
 })
 export class MaterialModule {}

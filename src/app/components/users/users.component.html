@@ -1,8 +1,8 @@
-<div class="container mx-auto mt-8">
+<div class="container mx-auto mt-20">
   <h2 class="text-2xl font-bold mb-4 text-customOrange-400">Users</h2>
-  <table class="w-full bg-white">
-    <thead class="flex items-center justify-center gap-20">
-      <tr class="w-[400px] flex justify-between px-4">
+  <table class="w-[1000px] bg-white flex flex-col items-center">
+    <thead class="flex items-center">
+      <tr class="w-[600px] flex justify-between px-[25px]">
         <th
           class="py-2 px-4 border-b text-white border-gray-200 bg-customBlue-400"
         >
@@ -11,16 +11,22 @@
         <th
           class="py-2 px-4 border-b text-white border-gray-200 bg-customBlue-400"
         >
+          Project Status
+        </th>
+        <th
+          class="py-2 px-4 border-b text-white border-gray-200 bg-customBlue-400"
+        >
           Actions
         </th>
       </tr>
     </thead>
-    <tbody class="flex items-center justify-center flex-col">
+    <tbody class="flex items-center flex-col">
       <tr
-        *ngFor="let user of users"
-        class="flex justify-between items-center border-2 mb-3 w-[400px]"
+        *ngFor="let user of usersWithProjectStatus"
+        class="flex gap-[90px] items-center border-2 mb-3 w-[600px]"
       >
-        <td class="py-2 px-4">{{ user.email }}</td>
+        <td class="py-2 px-4 max-w-[150px]">{{ user.email }}</td>
+        <td class="py-2 px-4 w-[150px]">{{ user.projectStatus }}</td>
         <td class="py-2 px-4">
           <button
             class="bg-customOrange-400 text-white px-4 py-2 rounded hover:bg-gray-400"

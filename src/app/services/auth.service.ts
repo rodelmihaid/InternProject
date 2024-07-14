@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
@@ -20,17 +21,16 @@ export class AuthService {
   constructor(
     private afs: AngularFireAuth,
     private firestore: AngularFirestore,
-    private router: Router
+    private router: Router,
+    private http: HttpClient
   ) {
     this.isAdminSubject = new BehaviorSubject<boolean>(false);
     this.userIdSubject = new BehaviorSubject<string | null>(null);
 
     this.userId$ = this.userIdSubject.asObservable();
-    console.log(this.userId$);
 
     this.isAdmin$ = this.isAdminSubject.asObservable();
     this.user$ = this.afs.authState;
-    console.log(this.user$);
 
     this.user$.subscribe((user) => {
       if (user) {
@@ -42,18 +42,12 @@ export class AuthService {
           .valueChanges()
           .subscribe((userData) => {
             this.userData = userData;
-            console.log(this.userData);
-            console.log('AICITATA');
+
             this.isAdminSubject.next(this.userData.isAdmin);
             this.isAuthenticated = true;
-            console.log(this.isAdmin$);
-
-            console.log(this.isAuthenticated);
           });
       } else {
         this.userData = undefined;
-        console.log(this.userData);
-        console.log(this.isAdmin$);
         this.userIdSubject.next(null);
         this.isAuthenticated = false;
         this.isAdminSubject.next(false);
@@ -62,6 +56,11 @@ export class AuthService {
   }
 
   //
+  sendEmailWithCredentials(email: string, password: string) {
+    const apiUrl = 'https://localhost:7286/api/Email';
+    // Înlocuiește cu URL-ul tău de backend
+    return this.http.post(apiUrl, { email, password }).toPromise();
+  }
 
   registerUserWithEmailAndPassword(email: string, password: string) {
     return this.afs
@@ -85,7 +84,8 @@ export class AuthService {
             const id = a.payload.doc.id;
             return { id, ...data };
           })
-        )
+        ),
+        map((users) => users.filter((user) => user.email !== 'admin@gmail.com'))
       );
   }
 
@@ -156,7 +156,6 @@ export class AuthService {
               .valueChanges()
               .subscribe((userData: any) => {
                 if (userData) {
-                  console.log(userData.isAdmin);
                 }
               });
           }

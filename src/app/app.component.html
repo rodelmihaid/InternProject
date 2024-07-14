@@ -1,3 +1,19 @@
 <app-navbar *ngIf="authService.user$ | async"></app-navbar>
+<div class="fixed bottom-4 right-4">
+  <button
+    (click)="toggleChat()"
+    *ngIf="authService.user$ | async"
+    class="text-customOrange-400 rounded-full p-3 shadow-lg hover:bg-orange-300"
+  >
+    <mat-icon>message</mat-icon>
+  </button>
+</div>
+<router-outlet class="bg-gray-100"></router-outlet>
 
-<router-outlet></router-outlet>
+<ng-container *ngIf="isChatOpen">
+  <div
+    class="fixed bottom-20 right-4 w-96 h-96 bg-white shadow-lg rounded-lg overflow-hidden"
+  >
+    <app-chat></app-chat>
+  </div>
+</ng-container>

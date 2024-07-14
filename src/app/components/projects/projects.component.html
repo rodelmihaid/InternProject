@@ -75,13 +75,19 @@
               >
                 Edit
               </button>
-              <button
-                *ngIf="!isAdmin"
-                class="btn btn-link text-customBlue-400 hover:text-orange-600 after:bg-orange-600 transition duration-500"
-                (click)="assignProject(item.id)"
-              >
-                Assign Project
-              </button>
+              <div *ngIf="!isAdmin">
+                <button
+                  *ngIf="!item.assignedBy"
+                  class="btn btn-link text-customBlue-400 hover:text-orange-600 after:bg-orange-600 transition duration-500"
+                  (click)="assignProject(item.id)"
+                >
+                  Assign Project
+                </button>
+                <div *ngIf="item.assignedBy">
+                  Assigned by
+                  {{ item.assignedBy }}
+                </div>
+              </div>
             </div>
           </div>
         </div>

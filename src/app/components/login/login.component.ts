@@ -25,8 +25,6 @@ export class LoginComponent implements OnInit {
     this.authService
       .signInWithEmailAndPassword(this.loginData.email, this.loginData.password)
       .then(() => {
-        console.log('Login data:', this.loginData);
-        console.log('Login successfully');
         this.router.navigate(['/home']);
         swal.fire({
           icon: 'success',
@@ -49,7 +47,6 @@ export class LoginComponent implements OnInit {
           position: 'top-start', // Poziția alertei
           showConfirmButton: false, // Nu afișa butonul de confirmare
         });
-        console.log(this.errorMessage);
       });
   }
 

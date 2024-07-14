@@ -12,6 +12,9 @@ import { HomeComponent } from './components/home/home.component';
 import { DocumentsComponent } from './components/documents/documents.component';
 import { ProjectsComponent } from './components/projects/projects.component';
 import { ContactComponent } from './components/contact/contact.component';
+import { ChatComponent } from './components/chat/chat.component';
+import { CoursesComponent } from './components/courses/courses.component';
+import { CourseDetailsComponent } from './components/course-details/course-details.component';
 
 const routes: Routes = [
   {
@@ -30,6 +33,8 @@ const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'projects', component: ProjectsComponent },
   { path: 'documents', component: DocumentsComponent },
+  { path: 'courses', component: CoursesComponent },
+  { path: 'courses/:id', component: CourseDetailsComponent },
   { path: 'contact', component: ContactComponent },
 ];
 

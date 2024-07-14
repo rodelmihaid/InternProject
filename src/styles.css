@@ -285,6 +285,7 @@ body {
   padding-right: 0.75rem;
   outline: 2px solid transparent;
   outline-offset: 2px;
+  color: grey;
 }
 :is(.dark .form-input) {
   --tw-border-opacity: 1;

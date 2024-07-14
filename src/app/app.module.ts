@@ -24,6 +24,10 @@ import { provideStorage, getStorage } from '@angular/fire/storage';
 import { DocumentsComponent } from './components/documents/documents.component';
 import { ProjectsComponent } from './components/projects/projects.component';
 import { ContactComponent } from './components/contact/contact.component';
+import { ChatComponent } from './components/chat/chat.component';
+import { HttpClientModule } from '@angular/common/http';
+import { CoursesComponent } from './components/courses/courses.component';
+import { CourseDetailsComponent } from './components/course-details/course-details.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +44,9 @@ import { ContactComponent } from './components/contact/contact.component';
     DocumentsComponent,
     ProjectsComponent,
     ContactComponent,
+    ChatComponent,
+    CoursesComponent,
+    CourseDetailsComponent,
   ],
   imports: [
     BrowserModule,
@@ -52,6 +59,7 @@ import { ContactComponent } from './components/contact/contact.component';
     AngularFirestoreModule,
     CommonModule,
     provideStorage(() => getStorage()),
+    HttpClientModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
